@@ -8,7 +8,7 @@
   },
   "routes": [
     {
-      "route": "/api/*",
+      "route": "/api*",
       "redirect": "/login",
       "statusCode": 301,
       "allowedRoles": [
