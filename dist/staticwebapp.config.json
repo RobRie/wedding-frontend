@@ -9,7 +9,7 @@
   "routes": [
     {
       "route": "/api/*",
-      "rewrite": "https://azf-hochzeitsappapi-cehjafcveaeqcwbg.francecentral-01.azurewebsites.net/*",
+      "redirect": "/",
       "statusCode": 302,
       "allowedRoles": [
         "anonymous"
