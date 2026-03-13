@@ -165,8 +165,8 @@ onUnmounted(() => {
     <LightboxView
       v-if="lightboxIndex >= 0 && images[lightboxIndex]"
       ref="lightboxRef"
-      :image-url="images[lightboxIndex].image_url"
-      :filename="images[lightboxIndex].filename"
+      :image-url="images[lightboxIndex]?.image_url || ''"
+      :filename="images[lightboxIndex]?.filename || ''"
       @close="closeLightbox"
       @prev="prevImage"
       @next="nextImage"
