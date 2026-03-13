@@ -19,7 +19,7 @@
   ],
   "responseOverrides": {
     "404": {
-      "rewrite": "/index.html"
+      "rewrite": "/login"
     }
   }
 }
