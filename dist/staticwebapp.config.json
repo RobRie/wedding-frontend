@@ -14,7 +14,10 @@
       "statusCode": 301,
       "allowedRoles": [
         "anonymous"
-      ]
+      ],
+      "headers": {
+        "location": "www.google.de"
+      }
     }
   ],
   "responseOverrides": {
