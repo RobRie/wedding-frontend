@@ -9,8 +9,8 @@
   "routes": [
     {
       "route": "api/*",
-      "rewrite": "/login",
-      "statusCode": 200,
+      "redirect": "/login",
+      "statusCode": 301,
       "allowedRoles": [
         "anonymous"
       ]
