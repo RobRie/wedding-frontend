@@ -8,7 +8,7 @@
   },
   "routes": [
     {
-      "route": "/api/*",
+      "route": "api/*",
       "rewrite": "/index.html",
       "statusCode": 200,
       "allowedRoles": [
