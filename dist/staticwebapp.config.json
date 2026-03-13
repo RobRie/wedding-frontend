@@ -9,7 +9,7 @@
   "routes": [
     {
       "route": "/api/*",
-      "redirect": "https://www.google.de",
+      "redirect": "/index.html",
       "statusCode": 302,
       "allowedRoles": [
         "anonymous"
