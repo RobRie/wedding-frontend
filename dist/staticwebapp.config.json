@@ -9,8 +9,8 @@
   "routes": [
     {
       "route": "/api/*",
-      "redirect": "/index.html",
-      "statusCode": 302,
+      "rewrite": "/index.html",
+      "statusCode": 200,
       "allowedRoles": [
         "anonymous"
       ]
