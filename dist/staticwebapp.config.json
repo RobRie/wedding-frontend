@@ -9,7 +9,7 @@
   "routes": [
     {
       "route": "api/*",
-      "rewrite": "/index.html",
+      "rewrite": "/login",
       "statusCode": 200,
       "allowedRoles": [
         "anonymous"
