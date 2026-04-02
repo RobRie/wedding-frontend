@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   imageUrl: string
@@ -25,6 +25,30 @@ if (typeof window !== 'undefined') {
 
 function cleanup() {
   window.removeEventListener('keydown', onKeydown)
+}
+
+// Swipe detection
+const touchStartX = ref(0)
+const touchStartY = ref(0)
+const SWIPE_THRESHOLD = 50
+
+function onTouchStart(event: TouchEvent) {
+  touchStartX.value = event.touches[0].clientX
+  touchStartY.value = event.touches[0].clientY
+}
+
+function onTouchEnd(event: TouchEvent) {
+  const deltaX = event.changedTouches[0].clientX - touchStartX.value
+  const deltaY = event.changedTouches[0].clientY - touchStartY.value
+
+  // Only trigger if horizontal swipe is dominant
+  if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
+    if (deltaX > 0) {
+      emit('prev')
+    } else {
+      emit('next')
+    }
+  }
 }
 
 defineExpose({ cleanup })
@@ -53,6 +77,8 @@ defineExpose({ cleanup })
       :src="imageUrl"
       :alt="filename"
       class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+      @touchstart="onTouchStart"
+      @touchend="onTouchEnd"
     />
 
     <!-- Next button -->
