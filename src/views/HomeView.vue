@@ -89,7 +89,7 @@ onMounted(loadFolders)
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         <button
             @click="showCreateDialog = true"
-            class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg font-semibold transition"
+            class="bg-rose-500 text-white font-semibold transition aspect-square rounded-xl overflow-hidden shadow-md group-hover:shadow-lg transition-all group-hover:scale-[1.02]"
           >
             + Neuer Ordner
           </button>
