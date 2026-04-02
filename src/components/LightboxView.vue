@@ -81,7 +81,7 @@ defineExpose({ cleanup })
     <img
       :src="imageUrl"
       :alt="filename"
-      class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+      class="object-contain rounded-lg shadow-2xl"
       @touchstart="onTouchStart"
       @touchend="onTouchEnd"
     />
