@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
+const folder = route.params.folder as string
 const props = defineProps<{
   imageUrl: string
   filename: string
@@ -79,9 +81,19 @@ defineExpose({ cleanup })
 
     <!-- Image -->
     <img
+    v-if="folder !== 'photobox'"
       :src="imageUrl"
       :alt="filename"
-      class="object-contain rounded-lg shadow-2xl"
+      class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+      @touchstart="onTouchStart"
+      @touchend="onTouchEnd"
+    />
+     <img
+    v-if="folder === 'photobox'"
+      :src="imageUrl"
+      :alt="filename"
+      class="max-w-[90vw] object-contain rounded-lg shadow-2xl"
+      style="transform: scale(2)"
       @touchstart="onTouchStart"
       @touchend="onTouchEnd"
     />
