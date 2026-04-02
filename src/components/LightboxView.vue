@@ -81,22 +81,13 @@ defineExpose({ cleanup })
 
     <!-- Image -->
     <img
-    v-if="folder !== 'photobox'"
       :src="imageUrl"
       :alt="filename"
       class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
       @touchstart="onTouchStart"
       @touchend="onTouchEnd"
     />
-     <img
-    v-if="folder === 'photobox'"
-      :src="imageUrl"
-      :alt="filename"
-      class="max-w-[90vw] object-contain rounded-lg shadow-2xl"
-      style="transform: scale(2)"
-      @touchstart="onTouchStart"
-      @touchend="onTouchEnd"
-    />
+    
 
     <!-- Next button -->
     <button
