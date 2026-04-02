@@ -33,13 +33,17 @@ const touchStartY = ref(0)
 const SWIPE_THRESHOLD = 50
 
 function onTouchStart(event: TouchEvent) {
+  if(event.touches[0]) {
   touchStartX.value = event.touches[0].clientX
   touchStartY.value = event.touches[0].clientY
+  }
 }
 
 function onTouchEnd(event: TouchEvent) {
+  if(event.changedTouches[0]) {
   const deltaX = event.changedTouches[0].clientX - touchStartX.value
   const deltaY = event.changedTouches[0].clientY - touchStartY.value
+
 
   // Only trigger if horizontal swipe is dominant
   if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > SWIPE_THRESHOLD) {
@@ -49,6 +53,7 @@ function onTouchEnd(event: TouchEvent) {
       emit('next')
     }
   }
+}
 }
 
 defineExpose({ cleanup })
