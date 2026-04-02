@@ -54,12 +54,7 @@ onMounted(loadFolders)
       <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-800">💍 Hochzeitsbilder</h1>
         <div class="flex gap-3">
-          <button
-            @click="showCreateDialog = true"
-            class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg font-semibold transition"
-          >
-            + Neuer Ordner
-          </button>
+          
           <button
             @click="logout"
             class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
@@ -92,6 +87,12 @@ onMounted(loadFolders)
 
       <!-- Folder grid -->
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <button
+            @click="showCreateDialog = true"
+            class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg font-semibold transition"
+          >
+            + Neuer Ordner
+          </button>
         <div
           v-for="folder in folders"
           :key="folder.name"
