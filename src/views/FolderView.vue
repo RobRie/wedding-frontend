@@ -46,7 +46,7 @@ async function handleUpload(files: File[]) {
     }
     await loadImages()
   } catch (err: any) {
-    uploadError.value = err?.response?.data?.error || 'Upload fehlgeschlagen'
+    uploadError.value = err?.response?.data?.error ||   `Upload fehlgeschlagen: ${err}`
   } finally {
     uploading.value = false
     uploadProgress.value = 0
