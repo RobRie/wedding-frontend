@@ -46,7 +46,7 @@ async function handleUpload(files: File[]) {
     }
     await loadImages()
   } catch (err: any) {
-    uploadError.value = err?.response?.data?.error ||   `Upload fehlgeschlagen: ${err}`
+    uploadError.value = err?.response?.data?.error || 'Upload fehlgeschlagen'
   } finally {
     uploading.value = false
     uploadProgress.value = 0
@@ -83,6 +83,105 @@ onMounted(loadImages)
 onUnmounted(() => {
   lightboxRef.value?.cleanup?.()
 })
+
+// --- Download / Save entire folder ---
+const downloadingAll = ref(false)
+const downloadProgress = ref(0)
+const downloadTotal = ref(0)
+const downloadError = ref('')
+
+function canShareFiles(): boolean {
+  const nav = navigator as Navigator & {
+    canShare?: (data: { files: File[] }) => boolean
+    share?: (data: { files: File[] }) => Promise<void>
+  }
+  if (!nav.canShare || !nav.share) return false
+  try {
+    const probe = new File([new Blob(['x'])], 'probe.txt', { type: 'text/plain' })
+    return nav.canShare({ files: [probe] })
+  } catch {
+    return false
+  }
+}
+
+async function fetchAsFile(image: ImageInfo): Promise<File> {
+  const response = await fetch(image.image_url, { mode: 'cors' })
+  if (!response.ok) throw new Error('Download fehlgeschlagen: ' + image.filename)
+  const blob = await response.blob()
+  let name = image.filename || 'bild.jpg'
+  if (!/\.[a-z0-9]+$/i.test(name)) {
+    const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
+    name = `${name}.${ext}`
+  }
+  return new File([blob], name, { type: blob.type || 'image/jpeg' })
+}
+
+async function downloadAll() {
+  if (downloadingAll.value || images.value.length === 0) return
+  downloadingAll.value = true
+  downloadError.value = ''
+  downloadProgress.value = 0
+  downloadTotal.value = images.value.length
+
+  const nav = navigator as Navigator & {
+    canShare?: (data: { files: File[] }) => boolean
+    share?: (data: { files: File[]; title?: string }) => Promise<void>
+  }
+  const useShare = canShareFiles()
+
+  try {
+    if (useShare) {
+      // Mobile: collect all files and open the native share sheet once
+      // -> user picks "In Fotos sichern" / "In Galerie speichern"
+      const files: File[] = []
+      for (const img of images.value) {
+        files.push(await fetchAsFile(img))
+        downloadProgress.value++
+      }
+
+      // Some platforms limit how many files can be shared at once.
+      // Try sharing all; on failure fall back to single-file sharing in sequence.
+      if (nav.canShare!({ files }) && nav.share) {
+        try {
+          await nav.share({ files, title: folder })
+          return
+        } catch (err) {
+          if ((err as DOMException)?.name === 'AbortError') return
+          // fall through to per-file sharing
+        }
+      }
+
+      for (const file of files) {
+        try {
+          await nav.share!({ files: [file], title: file.name })
+        } catch (err) {
+          if ((err as DOMException)?.name === 'AbortError') return
+        }
+      }
+    } else {
+      // Desktop / fallback: trigger one download per file
+      for (const img of images.value) {
+        const file = await fetchAsFile(img)
+        const url = URL.createObjectURL(file)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = file.name
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+        downloadProgress.value++
+        // Small delay so browsers don't drop downloads
+        await new Promise((r) => setTimeout(r, 150))
+      }
+    }
+  } catch (e: any) {
+    console.error(e)
+    downloadError.value = e?.message || 'Download fehlgeschlagen'
+  } finally {
+    downloadingAll.value = false
+  }
+}
 </script>
 
 <template>
@@ -97,9 +196,33 @@ onUnmounted(() => {
           ←
         </button>
         <h1 class="text-2xl font-bold text-gray-800 flex-1">📁 {{ folder }}</h1>
+        <button
+          v-if="!loading && images.length > 0"
+          @click="downloadAll"
+          :disabled="downloadingAll"
+          :title="`Alle ${images.length} Bilder speichern`"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500 hover:bg-rose-600 active:bg-rose-700 disabled:opacity-60 text-white text-sm shadow-sm transition"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 11l5 5 5-5M12 4v12" />
+          </svg>
+          <span class="hidden sm:inline">
+            {{ downloadingAll ? `${downloadProgress}/${downloadTotal}` : 'Alle speichern' }}
+          </span>
+          <span class="sm:hidden">
+            {{ downloadingAll ? `${downloadProgress}/${downloadTotal}` : 'Speichern' }}
+          </span>
+        </button>
         <span class="text-gray-400 text-sm" v-if="!loading">
           {{ images.length }} Bild{{ images.length !== 1 ? 'er' : '' }}
         </span>
+      </div>
+      <div
+        v-if="downloadError"
+        class="max-w-6xl mx-auto px-4 pb-3 text-sm text-red-600"
+        @click="downloadError = ''"
+      >
+        {{ downloadError }}
       </div>
     </header>
 
