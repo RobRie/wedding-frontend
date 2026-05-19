@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = axios.create({
   baseURL: 'https://azf-hochzeitsappapi-cehjafcveaeqcwbg.francecentral-01.azurewebsites.net/api',
-  timeout: 120_000,
+  timeout: 2000,
 })
 
 // Attach access code to every request
