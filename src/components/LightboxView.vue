@@ -78,13 +78,9 @@ async function downloadImage() {
     const file = new File([blob], name, { type: blob.type || 'image/jpeg' })
 
     // On mobile (iOS/Android): use Web Share API so user can save to gallery/photos
-    const nav = navigator as Navigator & {
-      canShare?: (data: { files: File[] }) => boolean
-      share?: (data: { files: File[]; title?: string }) => Promise<void>
-    }
-    if (nav.canShare && nav.share && nav.canShare({ files: [file] })) {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await nav.share({ files: [file], title: name })
+        await navigator.share({ files: [file], title: name })
         return
       } catch (err) {
         // User cancelled or share failed - fall through to classic download
